@@ -2,13 +2,17 @@
 
 Tool for downloading full albums from Spotify using `spotdl`,
 
-### steps
+`spotipy` uses Spotify for downloading the artists metadata, and then `SpotDL` uses youtube-music to download the songs.
 
-* Create app in https://developer.spotify.com/dashboard
-* Install spotDL from https://github.com/spotDL/spotify-downloader
-* Install dependencies
-  * `pip install spotipy`
-* Execute scripts:
+### How to use
+
+* Install dependencies with `make install` or alternatively:
+  * `spotDL` from https://github.com/spotDL/spotify-downloader
+  * `spotipy` with `pip install spotipy`
+* Create app in https://developer.spotify.com/dashboard and copy credentials in [creds/spotify_credentials.json](https://github.com/gomezportillo/SpotifyDownloader/tree/main/creds/spotify_credentials.json)
+* Execute scripts with `make`
+
+Alternatively, you can execute them individually using:
 
 ```sh
 python3 get_my_artists.py

@@ -5,14 +5,19 @@ import os
 import subprocess
 import argparse
 import time
+import json
 import re
 
 # Spotify API credentials
-SPOTIFY_CLIENT_ID = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
-SPOTIFY_CLIENT_SECRET = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
+with open("creds/spotify_credentials.json", "r") as f:
+    creds = json.load(f)
+
+SPOTIFY_CLIENT_ID = creds["client_id"]
+SPOTIFY_CLIENT_SECRET = creds["client_secret"]
 
 OUTPUT_FOLDER = "Artists"
-MIN_YEAR = 1990
+MIN_YEAR = 1900
+MAX_YEAR = 2100
 
 # Initialize Spotify client
 sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(
@@ -29,16 +34,16 @@ def get_albums(artist_id):
     albums = []
     seen_album_ids = set()
 
-    for album_group in ['album', 'single', 'compilation']:  # album, single, compilation, appears_on
+    for album_group in ['album', 'single']:  # album, single, compilation, appears_on
         results = sp.artist_albums(artist_id, album_type=album_group)
         while results:
             for album in results['items']:
 
                 if album['id'] not in seen_album_ids:
                     release_date = album['release_date']
-                    release_year = int(release_date.split("-")[0])
+                    release_year = int(release_date.split("-")[0])  # Release year
 
-                    if release_year >= MIN_YEAR:
+                    if MAX_YEAR >= release_year >= MIN_YEAR:
                         seen_album_ids.add(album['id'])
                         albums.append(album)
                     else:
@@ -60,10 +65,16 @@ def get_tracks(album_id):
 
 def download_album(album_url, output_folder):
     subprocess.run([
-        "spotdl",
+        "python3", "-m", "spotdl",
         album_url,
-        "--output", output_folder
-    ])
+        "--output", output_folder,
+        "--client-id", SPOTIFY_CLIENT_ID,
+        "--client-secret", SPOTIFY_CLIENT_SECRET,
+        # "--lyrics", "synced",
+        "--threads", "4",
+        "--overwrite", "skip",
+        "--print-errors",
+    ], check=True)
 
 
 def rename_tracks(album_folder_path, tracks):

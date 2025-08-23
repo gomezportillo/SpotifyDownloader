@@ -1,15 +1,20 @@
 import spotipy
+import json
 from spotipy.oauth2 import SpotifyOAuth
 
 # Spotify API credentials
-SPOTIPY_CLIENT_ID = 'XXXXXXXXXXXXXXXXXXXXXXXXXXX'
-SPOTIPY_CLIENT_SECRET = 'XXXXXXXXXXXXXXXXXXXXXXXXXXX'
+with open("creds/spotify_credentials.json", "r") as f:
+    creds = json.load(f)
+
+SPOTIFY_CLIENT_ID = creds["client_id"]
+SPOTIFY_CLIENT_SECRET = creds["client_secret"]
+
 SPOTIPY_REDIRECT_URI = "http://localhost:8888/callback"
 
 # Initialize Spotify client
 sp = spotipy.Spotify(auth_manager=SpotifyOAuth(
-    client_id=SPOTIPY_CLIENT_ID,
-    client_secret=SPOTIPY_CLIENT_SECRET,
+    client_id=SPOTIFY_CLIENT_ID,
+    client_secret=SPOTIFY_CLIENT_SECRET,
     redirect_uri=SPOTIPY_REDIRECT_URI,
     scope="user-follow-read"
 ))
@@ -29,21 +34,22 @@ def get_followed_artists_with_urls():
 
 
 def save_artists_to_file(artists, file_name):
-    # Sort artists alphabetically by their name
-    sorted_artists = sorted(artists, key=lambda x: x[0].lower())  # Sort by name, case-insensitive
+    # Sort artists alphabetically by their name case-insensitive
+    sorted_artists = sorted(artists, key=lambda x: x[0].lower())
     with open(file_name, "w") as f:
         for artist_name, artist_url in sorted_artists:
             f.write(f"{artist_name}:{artist_url}\n")
+
     print(f"Saved {len(sorted_artists)} artists to {file_name}.")
 
-    
+
 def main():
     print("Fetching followed artists with URLs...")
 
     artists_with_urls = get_followed_artists_with_urls()
 
-    save_artists_to_file(artists_with_urls, "followed_artists.txt")
+    save_artists_to_file(artists_with_urls, "in/followed_artists.txt")
 
-    
+
 if __name__ == "__main__":
     main()
