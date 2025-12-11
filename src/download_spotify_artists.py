@@ -15,9 +15,11 @@ with open("creds/spotify_credentials.json", "r") as f:
 SPOTIFY_CLIENT_ID = creds["client_id"]
 SPOTIFY_CLIENT_SECRET = creds["client_secret"]
 
-OUTPUT_FOLDER = "Artists"
+OUTPUT_FOLDER = "out/Artists"
 MIN_YEAR = 1900
 MAX_YEAR = 2100
+
+DEBUG=False
 
 # Initialize Spotify client
 sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(
@@ -34,22 +36,22 @@ def get_albums(artist_id):
     albums = []
     seen_album_ids = set()
 
-    for album_group in ['album', 'single']:  # album, single, compilation, appears_on
-        results = sp.artist_albums(artist_id, album_type=album_group)
-        while results:
-            for album in results['items']:
+    results = sp.artist_albums(artist_id, include_groups='album')    # album, single, compilation, appears_on
 
-                if album['id'] not in seen_album_ids:
-                    release_date = album['release_date']
-                    release_year = int(release_date.split("-")[0])  # Release year
+    while results:
+        for album in results['items']:
 
-                    if MAX_YEAR >= release_year >= MIN_YEAR:
-                        seen_album_ids.add(album['id'])
-                        albums.append(album)
-                    else:
-                        print(f"Ignoring {album_group} {album['name']}' released in {release_year}")
+            if album['id'] not in seen_album_ids:
+                release_date = album['release_date']
+                release_year = int(release_date.split("-")[0])
 
-            results = sp.next(results)
+                if MAX_YEAR >= release_year >= MIN_YEAR:
+                    seen_album_ids.add(album['id'])
+                    albums.append(album)
+                else:
+                    print(f"Ignoring {album['album_type']} '{album['name']}' released in {release_year}")
+
+        results = sp.next(results)
 
     return albums
 
@@ -136,17 +138,18 @@ def main():
 
                 print(f"Downloading album: {album_folder_name}")
 
-                # Download album
-                download_album(album_url, album_folder_path)
+                if not DEBUG:
+                    # Download album
+                    download_album(album_url, album_folder_path)
 
-                # Get the tracks for the album
-                tracks = get_tracks(album['id'])
+                    # Get the tracks for the album
+                    tracks = get_tracks(album['id'])
 
-                # Wait a little to ensure files are downloaded
-                time.sleep(1)  # Adjust if necessary
+                    # Wait a little to ensure files are downloaded
+                    time.sleep(1)  # Adjust if necessary
 
-                # Rename the songs according to track number and album year
-                rename_tracks(album_folder_path, tracks)
+                    # Rename the songs according to track number and album year
+                    rename_tracks(album_folder_path, tracks)
 
         except Exception as e:
                 exc_type, exc_obj, exc_tb = sys.exc_info()
