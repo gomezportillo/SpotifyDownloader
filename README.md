@@ -15,6 +15,7 @@ Tool for downloading full albums from Spotify using `spotdl`,
 Alternatively, you can execute them individually using:
 
 ```sh
-python3 get_my_artists.py
-python3 download_spotify_artists.py followed_artists.txt
+python3 src/get_my_artists.py
+python3 src/download_discographies.py in/followed_artists.txt
+python3 src/download_playlists.py in/playlists.txt
 ```

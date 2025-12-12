@@ -73,7 +73,7 @@ def download_album(album_url, output_folder):
         "--client-id", SPOTIFY_CLIENT_ID,
         "--client-secret", SPOTIFY_CLIENT_SECRET,
         # "--lyrics", "synced",
-        "--threads", "4",
+        "--threads", "8",
         "--overwrite", "skip",
         "--print-errors",
     ], check=True)

@@ -20,8 +20,8 @@ install: $(VENV_DIR)/bin/activate
 get-artists: $(VENV_DIR)/bin/activate
 	$(PYTHON) src/get_my_artists.py
 
-download-songs: get-artists
-	$(PYTHON) src/download_spotify_artists.py in/followed_artists.txt
+download-discographies:
+	$(PYTHON) src/download_discographies.py in/followed_artists.txt
 
 download-playlists:
 	$(PYTHON) src/download_playlists.py in/playlists.txt
