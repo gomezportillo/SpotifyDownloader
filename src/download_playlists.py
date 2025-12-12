@@ -10,6 +10,7 @@ INPUT_FILE = "in/playlists.txt"
 OUTPUT_ROOT = Path("out/Playlists")
 
 MIN_DATE = None # datetime(2025, 1, 1, tzinfo=timezone.utc)
+NUM_THREADS = 8
 
 with open("creds/spotify_credentials.json", "r") as f:
     creds = json.load(f)
@@ -71,7 +72,7 @@ def download_playlist_full(url, playlist_name):
         url,
         "--client-id", SPOTIFY_CLIENT_ID,
         "--client-secret", SPOTIFY_CLIENT_SECRET,
-        "--threads", "6",
+        "--threads", str(NUM_THREADS),
         "--overwrite", "skip",
         "--print-errors",
     ]
@@ -96,7 +97,7 @@ def download_tracks_individual(urls, playlist_name):
         "--output", str(playlist_dir),
         "--client-id", SPOTIFY_CLIENT_ID,
         "--client-secret", SPOTIFY_CLIENT_SECRET,
-        "--threads", "6",
+        "--threads", str(NUM_THREADS),
         "--overwrite", "skip",
         "--print-errors",
     ]
