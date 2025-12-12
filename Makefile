@@ -23,6 +23,9 @@ get-artists: $(VENV_DIR)/bin/activate
 download-songs: get-artists
 	$(PYTHON) src/download_spotify_artists.py in/followed_artists.txt
 
+download-playlists:
+	$(PYTHON) src/download_playlists.py in/playlists.txt
+
 # Limpiar archivos generados
 clean:
 	rm -fr $(VENV_DIR)
